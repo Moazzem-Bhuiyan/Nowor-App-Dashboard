@@ -33,13 +33,13 @@ export default function CreateSubscriptionPlanModal({ open, setOpen }) {
           label="Name"
           placeholder="Enter subscription plan name"
         />
-
+        {/* 
         <UTextArea
           minRows={5}
           name="description"
           label="Description"
           placeholder="Enter description"
-        />
+        /> */}
         <USelect
           name="duration"
           label="Billing Cycle"
