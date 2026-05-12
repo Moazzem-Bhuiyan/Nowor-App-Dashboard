@@ -5,10 +5,5 @@ export const metadata = {
   description: "Sign in to admin dashboard of Nowor",
 };
 export default function LoginPage() {
-  return (
-    // <section className="">
-    //   <LoginForm />
-    // </section>
-    <LoginForm />
-  );
+  return <LoginForm />;
 }

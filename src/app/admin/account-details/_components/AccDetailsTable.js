@@ -11,10 +11,15 @@ import Image from "next/image";
 import CustomConfirm from "@/components/CustomConfirm/CustomConfirm";
 import { message } from "antd";
 import ProfileModal from "@/components/SharedModals/ProfileModal";
+import { useGetAllusersQuery } from "@/redux/api/userApi";
 
 export default function AccDetailsTable({ limit }) {
   const [searchText, setSearchText] = useState("");
   const [profileModalOpen, setProfileModalOpen] = useState(false);
+
+  // get all user from api
+  const { data: usersData, isLoading } = useGetAllusersQuery();
+  console.log("🚀 ~ AccDetailsTable ~ usersData:", usersData);
   // Dummy table Data (Updated with USER column based on image)
   const data = Array.from({ length: limit || 10 }).map((_, inx) => {
     return {

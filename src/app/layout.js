@@ -1,5 +1,7 @@
 import "./globals.css";
 import Providers from "../lib/Providers";
+import ReduxProviders from "@/redux/lib/ReduxProvider";
+import { Toaster } from "react-hot-toast";
 
 export const metadata = {
   title: {
@@ -35,7 +37,12 @@ export default function RootLayout({ children }) {
       </head>
 
       <body className={`comic-font box-border antialiased`}>
-        <Providers>{children}</Providers>
+        <Providers>
+          <ReduxProviders>
+            <Toaster richColors position="top-center" />
+            <Providers>{children}</Providers>
+          </ReduxProviders>
+        </Providers>
       </body>
     </html>
   );

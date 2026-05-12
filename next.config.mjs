@@ -3,10 +3,18 @@ const nextConfig = {
   redirects: async () => [
     {
       source: "/",
-      destination: "/login",
+      destination: "/admin/dashboard",
       permanent: false,
     },
   ],
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+    ],
+  },
 };
 
 export default nextConfig;

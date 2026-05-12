@@ -5,8 +5,32 @@ import { RiCloseLargeLine } from "react-icons/ri";
 import FormWrapper from "@/components/Form/FormWrapper";
 import UInput from "@/components/Form/UInput";
 import UUpload from "@/components/Form/UUpload";
+import toast from "react-hot-toast";
+import { useUpdateInterestMutation } from "@/redux/api/interestApi";
 
-export default function EditinterestModal({ open, setOpen }) {
+export default function EditinterestModal({ open, setOpen, data: item }) {
+  // update interest api
+
+  const [updateInterest, { isLoading }] = useUpdateInterestMutation();
+  const handleSubmit = async (data) => {
+    try {
+      const formData = new FormData();
+      formData.append("interestName", data.interestName);
+      if (data.interestIcon && data.interestIcon.length > 0) {
+        formData.append("interestIcon", data.interestIcon[0].originFileObj);
+      }
+      const response = await updateInterest({
+        id: item?.id,
+        data: formData,
+      }).unwrap();
+      if (response?.success) {
+        toast.success(response?.message || "Interest updated successfully");
+        setOpen(false);
+      }
+    } catch (error) {
+      toast.error("Failed to update interest");
+    }
+  };
   return (
     <Modal
       open={open}
@@ -35,16 +59,38 @@ export default function EditinterestModal({ open, setOpen }) {
         </div>
       </div>
       <div className="p-5">
-        <FormWrapper>
+        <FormWrapper
+          onSubmit={handleSubmit}
+          key={item?.id}
+          defaultValues={{
+            interestName: item?.name,
+          }}
+        >
           <UInput
-            name="interest"
+            name="interestName"
             type="text"
             label="Interest"
             placeholder="Enter interest"
             required={true}
             className="!h-11 !rounded-full border !border-black px-4 py-3 text-[#4A3F35] shadow-md"
           />
-          <UUpload name="image" label="Interest Icon" max={1} />
+          <UUpload
+            name="interestIcon"
+            label="Interest Icon"
+            max={1}
+            defaultFileList={
+              item?.img
+                ? [
+                    {
+                      uid: "-1",
+                      name: "interestIcon",
+                      status: "done",
+                      url: item.img,
+                    },
+                  ]
+                : []
+            }
+          />{" "}
           {/* Footer Buttons */}
           <div className="flex justify-between gap-4 px-1 pb-8">
             <button
@@ -54,8 +100,12 @@ export default function EditinterestModal({ open, setOpen }) {
               Cancel
             </button>
 
-            <button className="w-full rounded-full border border-b-4 border-black bg-[#D8CBB5] py-3 font-medium text-[#2b251f] shadow-md transition hover:opacity-90">
-              submit
+            <button
+              type="submit"
+              className="w-full rounded-full border border-b-4 border-black bg-[#D8CBB5] py-3 font-medium text-[#2b251f] shadow-md transition hover:opacity-90"
+              disabled={isLoading}
+            >
+              {isLoading ? "Submitting..." : "submit"}
             </button>
           </div>
         </FormWrapper>

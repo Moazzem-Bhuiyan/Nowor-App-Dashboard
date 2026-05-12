@@ -2,21 +2,19 @@
 
 import { Button } from "antd";
 import { Bell } from "lucide-react";
-import { Menu } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import userAvatar from "@/assets/images/user-avatar-lg.png";
 import { usePathname } from "next/navigation";
 import { Layout } from "antd";
 import { AlignJustify } from "lucide-react";
-import { Badge } from "antd";
-import { Search } from "lucide-react";
+import { useGetAdminQuery } from "@/redux/api/admin";
 const { Header } = Layout;
 
 export default function HeaderContainer({ collapsed, setCollapsed }) {
   const pathname = usePathname();
   const navbarTitle = pathname.split("/admin")[1];
-
+  // get admin profile info
+  const { data: profileData, refetch } = useGetAdminQuery();
   return (
     <Header
       style={{
@@ -61,13 +59,16 @@ export default function HeaderContainer({ collapsed, setCollapsed }) {
             className="group flex items-center gap-x-2 text-black hover:text-primary-blue"
           >
             <Image
-              src={userAvatar}
+              src={profileData?.data?.avatar}
               alt="Admin avatar"
               width={52}
               height={52}
-              className="rounded-full border-2 border-black p-0.5 transition group-hover:border"
+              className="rounded-full aspect-square border-2 border-black p-0.5 transition group-hover:border"
             />
-            <h4 className="text-lg font-semibold">Moazzem bhuiyan </h4>
+            <h4 className="text-lg font-semibold">
+              {" "}
+              {profileData?.data?.name}{" "}
+            </h4>
           </Link>
         </div>
       </div>

@@ -6,14 +6,29 @@ import Image from "next/image";
 import { PlusOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import AddorcaModal from "./AddorcaModal";
+import {
+  useDeleteEventTypeMutation,
+  useGetAllEventTypeQuery,
+} from "@/redux/api/eventTypeAPi";
+import toast from "react-hot-toast";
 
 export default function Orcacontainer() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const data = Array.from({ length: 6 }).map((_, inx) => ({
-    key: inx + 1,
-    img: orcaImage,
-  }));
+
+  // get event orca list from api
+  const { data: orcaData, isLoading } = useGetAllEventTypeQuery();
+
+  // delete orca api
+  const [deleteOrca, { isLoading: isDeleting }] = useDeleteEventTypeMutation();
+
+  const data =
+    orcaData?.data?.map((item, inx) => ({
+      key: inx + 1,
+      id: item?.id,
+      title: item?.title,
+      img: item?.thumbnail,
+    })) || [];
   return (
     <div className="rounded-2xl bg-[#D9CBB3] p-6">
       {/* Top Section */}
@@ -42,11 +57,13 @@ export default function Orcacontainer() {
             <div className="relative mb-6 flex items-center gap-3">
               <Image
                 src={item.img}
-                alt="icon"
+                alt="Orca Image"
                 className="w-full object-cover"
+                width={1200}
+                height={1200}
               />
               <div className="roun absolute right-2 top-2 rounded-full border border-[#4A3F35] !bg-[#EDE7DD] px-3 py-1 text-xs font-medium shadow">
-                Coffee & Social
+                {item.title}
               </div>
             </div>
 
@@ -56,7 +73,18 @@ export default function Orcacontainer() {
                 title="Delete"
                 content="Are you sure to delte this orca?"
                 description="Are you sure to delte this orca?"
-                // onConfirm={handleBlockUser}
+                onConfirm={() => {
+                  try {
+                    const response = deleteOrca({ id: item.id }).unwrap();
+                    if (response?.success) {
+                      toast.success(
+                        response?.message || "Orca deleted successfully",
+                      );
+                    }
+                  } catch (error) {
+                    toast.error("Failed to delete orca");
+                  }
+                }}
               >
                 {" "}
                 <button className="h-9 !w-full rounded-lg !border !border-b-4 !border-black !bg-[#F5F1E6] text-sm font-medium text-red-500 shadow-sm transition hover:bg-gray-100">

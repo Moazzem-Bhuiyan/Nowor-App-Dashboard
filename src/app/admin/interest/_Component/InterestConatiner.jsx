@@ -1,22 +1,36 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
-import { Input, Button } from "antd";
+import { Input, Button, Image } from "antd";
 import { SearchOutlined, PlusOutlined } from "@ant-design/icons";
-import categoryImg from "@/assets/event/coffee.png";
 import CustomConfirm from "@/components/CustomConfirm/CustomConfirm";
 import AddinterestModal from "./AddinterestModal";
 import EditinterestModal from "./EditinterestModal";
+import {
+  useDeleteInterestMutation,
+  useGetAllInterestsQuery,
+} from "@/redux/api/interestApi";
+import toast from "react-hot-toast";
 
 export default function InterestConatiner() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const data = Array.from({ length: 12 }).map((_, inx) => ({
-    key: inx + 1,
-    name: "Coffee & Social",
-    img: categoryImg,
-  }));
+  const [selectedInterest, setSelectedInterest] = useState(null);
+
+  // get all interest from api
+  const { data: interestData, isLoading } = useGetAllInterestsQuery();
+
+  // delete interest api endpoint
+  const [deleteInterest, { isLoading: isDeleting }] =
+    useDeleteInterestMutation();
+
+  const data =
+    interestData?.data?.map((interest, inx) => ({
+      key: inx + 1,
+      id: interest?.id,
+      name: interest?.interestName,
+      img: interest?.interestIcon,
+    })) || [];
 
   return (
     <div className="rounded-2xl bg-[#D9CBB3] p-6">
@@ -52,7 +66,7 @@ export default function InterestConatiner() {
             {/* Top */}
             <div className="mb-6 flex items-center gap-3">
               <Image
-                src={item.img}
+                src={item?.img}
                 alt="icon"
                 width={24}
                 height={24}
@@ -67,7 +81,16 @@ export default function InterestConatiner() {
                 title="Delete"
                 content="Are you sure to delte this interest?"
                 description="Are you sure to delte this interest?"
-                // onConfirm={handleBlockUser}
+                onConfirm={() => {
+                  try {
+                    const res = deleteInterest(item?.id);
+                    if (res?.success) {
+                      toast.success("Interest deleted successfully");
+                    }
+                  } catch (error) {
+                    toast.error("Failed to delete interest");
+                  }
+                }}
               >
                 {" "}
                 <button className="text-sm font-medium text-red-500 hover:underline">
@@ -76,7 +99,10 @@ export default function InterestConatiner() {
               </CustomConfirm>
 
               <button
-                onClick={() => setIsEditModalOpen(true)}
+                onClick={() => {
+                  setIsEditModalOpen(true);
+                  setSelectedInterest(item);
+                }}
                 className="rounded-full border border-b-4 border-black px-6 py-1 text-sm font-medium text-green-600 shadow-sm transition hover:bg-gray-100"
               >
                 Edit
@@ -87,7 +113,11 @@ export default function InterestConatiner() {
       </div>
 
       <AddinterestModal open={isModalOpen} setOpen={setIsModalOpen} />
-      <EditinterestModal open={isEditModalOpen} setOpen={setIsEditModalOpen} />
+      <EditinterestModal
+        open={isEditModalOpen}
+        setOpen={setIsEditModalOpen}
+        data={selectedInterest}
+      />
     </div>
   );
 }

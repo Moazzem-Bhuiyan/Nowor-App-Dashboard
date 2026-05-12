@@ -9,14 +9,26 @@ import { Button } from "antd";
 import { useRouter } from "next/navigation";
 import logo from "@/assets/logos/Logo.png";
 import Image from "next/image";
+import { useSignInMutation } from "@/redux/api/authApi";
+import toast from "react-hot-toast";
 
 export default function LoginForm() {
   const router = useRouter();
-
-  const onLoginSubmit = (data) => {
-    console.log(data);
-
-    router.push("/admin/dashboard");
+  const [signin, { isLoading }] = useSignInMutation();
+  const onLoginSubmit = async (data) => {
+    try {
+      const payload = {
+        ...data,
+        rememberMe: true,
+      };
+      const res = await signin(payload).unwrap();
+      if (res?.success) {
+        toast.success(res?.message || "Login successful");
+        router.push("/admin/dashboard");
+      }
+    } catch (error) {
+      toast.error(error?.data?.message || "Failed to login");
+    }
   };
 
   return (
@@ -52,6 +64,7 @@ export default function LoginForm() {
           htmlType="submit"
           type="primary"
           size="large"
+          loading={isLoading}
           className="!h-10 w-full !rounded-full !border !border-b-4 !border-black !bg-[#FFFFFF] !font-semibold !text-black"
         >
           Log In

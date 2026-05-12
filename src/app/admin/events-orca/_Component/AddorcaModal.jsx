@@ -5,8 +5,26 @@ import { RiCloseLargeLine } from "react-icons/ri";
 import FormWrapper from "@/components/Form/FormWrapper";
 import UInput from "@/components/Form/UInput";
 import UUpload from "@/components/Form/UUpload";
+import { useAddEventTypeMutation } from "@/redux/api/eventTypeAPi";
 
 export default function AddorcaModal({ open, setOpen }) {
+  const [addEventType, { isLoading }] = useAddEventTypeMutation();
+  const handleSubmit = async (data) => {
+    try {
+      const formData = new FormData();
+      formData.append("title", data.title);
+      if (data.thumbnail && data.thumbnail.length > 0) {
+        formData.append("thumbnail", data.thumbnail[0].originFileObj);
+      }
+      const response = await addEventType(formData).unwrap();
+      if (response?.success) {
+        toast.success(response?.message || "Orca added successfully");
+        setOpen(false);
+      }
+    } catch (error) {
+      toast.error("Failed to add orca");
+    }
+  };
   return (
     <Modal
       open={open}
@@ -35,9 +53,13 @@ export default function AddorcaModal({ open, setOpen }) {
         </div>
       </div>
       <div className="p-5">
-        <FormWrapper>
-          <UInput name="name" label="Orca Name" placeholder="Enter orca name" />
-          <UUpload name="image" label="Orca Icon" max={1} />
+        <FormWrapper onSubmit={handleSubmit}>
+          <UInput
+            name="title"
+            label="Orca Name"
+            placeholder="Enter orca name"
+          />
+          <UUpload name="thumbnail" label="Orca Icon" max={1} />
           {/* Footer Buttons */}
           <div className="flex justify-between gap-4 px-1 pb-8">
             <button
@@ -47,8 +69,12 @@ export default function AddorcaModal({ open, setOpen }) {
               Cancel
             </button>
 
-            <button className="w-full rounded-full border border-b-4 border-black bg-[#D8CBB5] py-3 font-medium text-[#2b251f] shadow-md transition hover:opacity-90">
-              submit
+            <button
+              type="submit"
+              className="w-full rounded-full border border-b-4 border-black bg-[#D8CBB5] py-3 font-medium text-[#2b251f] shadow-md transition hover:opacity-90"
+              disabled={isLoading}
+            >
+              {isLoading ? "Submitting..." : "submit"}
             </button>
           </div>
         </FormWrapper>
