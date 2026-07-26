@@ -3,21 +3,21 @@ import { baseApi } from "./baseApi";
 const UserApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAllusers: builder.query({
-      query: () => ({
-        url: `/admin/users`,
+      query: ({page,limit,searchTerm}) => ({
+        url: `/admin/users?page=${page}&limit=${limit}&searchTerm=${searchTerm}`,
         method: "GET",
       }),
       providesTags: ["user"],
     }),
     getUserById: builder.query({
-      query: (id) => ({ url: `/teachers/${id}`, method: "GET" }),
+      query: ({id}) => ({ url: `/admin/users/${id}`, method: "GET" }),
       providesTags: (result, error, id) => [{ type: "user", id }],
     }),
     blockUnblockUser: builder.mutation({
-      query: (data) => ({
-        url: `/users/change-status`,
+      query: ({id,body}) => ({
+        url: `/admin/users/${id}`,
         method: "PATCH",
-        body: data,
+        body: body,
       }),
       invalidatesTags: ["user"],
     }),

@@ -9,7 +9,7 @@ const JoditEditor = dynamic(() => import("jodit-react"), {
   ssr: false,
 });
 
-export default function UTextEditor({ name, label, placeholder }) {
+export default function UTextEditor({ name, label, placeholder ,value }) {
   return (
     <Controller
       name={name}
@@ -20,7 +20,7 @@ export default function UTextEditor({ name, label, placeholder }) {
           help={error ? error.message : ""}
         >
           <JoditEditor
-            value={field.value || ""}
+            value={field.value || value}
             config={{
               height: 500,
               placeholder: placeholder,

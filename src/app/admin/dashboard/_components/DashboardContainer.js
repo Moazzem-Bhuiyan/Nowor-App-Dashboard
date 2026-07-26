@@ -1,23 +1,28 @@
 "use client";
-import RecentUserTable from "./RecentUserTable";
 import CustomCountUp from "@/components/CustomCountUp/CustomCountUp";
 import EarningSummary from "./Earnings";
-import RecentOrderTable from "./RecentOrderTable";
 import UserStatistics from "./UserStatics";
 import AccDetailsTable from "../../account-details/_components/AccDetailsTable";
+import { useGetDashboardStatsDataQuery } from "@/redux/api/dashboardApi";
 
-// Dummy Data
+
+export default function DashboardContainer() {
+
+  // get dashboard stats data
+  const { data: dashboardStatsData ,isLoading} = useGetDashboardStatsDataQuery();
+
+  // Dummy Data
 const userStats = [
   {
     key: "users",
     title: "Total Users",
-    count: 518,
+    count: dashboardStatsData?.data?.totalUser || 0,
   },
-  {
-    key: "premium_users",
-    title: "Total Premium Users",
-    count: 108,
-  },
+  // {
+  //   key: "premium_users",
+  //   title: "Total Premium Users",
+  //   count: 108,
+  // },
   {
     key: "event",
     title: "Total Event",
@@ -48,40 +53,8 @@ const userStats = [
         </g>
       </svg>
     ),
-    count: 118,
+    count: dashboardStatsData?.data?.totalEvents || 0,
   },
-  // {
-  //   key: "service-providers",
-  //   title: "Total Service Providers",
-  //   icon: (
-  //     <svg
-  //       xmlns="http://www.w3.org/2000/svg"
-  //       width="58"
-  //       height="58"
-  //       fill="none"
-  //       viewBox="0 0 58 58"
-  //     >
-  //       <mask
-  //         id="mask0_92_3017"
-  //         width="58"
-  //         height="58"
-  //         x="0"
-  //         y="0"
-  //         maskUnits="userSpaceOnUse"
-  //         style={{ maskType: "alpha" }}
-  //       >
-  //         <path fill="#D9D9D9" d="M0 0h58v58H0z"></path>
-  //       </mask>
-  //       <g mask="url(#mask0_92_3017)">
-  //         <path
-  //           fill="#fff"
-  //           d="M9.667 48.333V29h9.666v19.333zm14.5 0V9.667h9.666v38.666zm14.5 0V21.75h9.666v26.583z"
-  //         ></path>
-  //       </g>
-  //     </svg>
-  //   ),
-  //   count: 218,
-  // },
   {
     key: "earning",
     title: "Total Earning",
@@ -112,11 +85,10 @@ const userStats = [
         </g>
       </svg>
     ),
-    count: 1500,
+    count: dashboardStatsData?.data?.totalEarning,
   },
 ];
 
-export default function DashboardContainer() {
   return (
     <div className="space-y-20">
       {/* User Stats Section */}
@@ -140,14 +112,6 @@ export default function DashboardContainer() {
                 </h5>
               </div>
             </div>
-
-            {/* <div className="flex items-center gap-5">
-              <h1 className=" text-[#4BB54B] text-xl font-bold flex items-center gap-2 bg-[#4BB54B1A] p-1 mt-2 rounded-lg">
-                <span><PiArrowsOutSimple /></span>
-                <span>4%</span>
-              </h1>
-              <h1 className=" text-xl">From the last month</h1>
-            </div> */}
           </div>
         ))}
       </section>

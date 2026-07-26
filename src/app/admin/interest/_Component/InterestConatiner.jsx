@@ -68,8 +68,8 @@ export default function InterestConatiner() {
               <Image
                 src={item?.img}
                 alt="icon"
-                width={24}
-                height={24}
+                width={34}
+                height={34}
                 className="object-contain"
               />
               <h4 className="font-medium text-[#4A3F35]">{item.name}</h4>

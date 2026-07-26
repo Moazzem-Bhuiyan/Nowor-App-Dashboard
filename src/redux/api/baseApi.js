@@ -3,7 +3,20 @@ import { logout } from "../features/authSlice";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: process.env.NEXT_PUBLIC_BASE_URL,
-  credentials: "include",
+  // credentials: "include",
+  prepareHeaders: (headers, { getState }) => {
+    // ngrok warning skip 
+    headers.set("ngrok-skip-browser-warning", "69420");
+
+    const token = getState()?.auth?.token;
+    console.log("🚀 ~ token:--------------------", token);
+
+    if (token) {
+      headers.set("Authorization", `Bearer ${token}`);
+    }
+
+    return headers;
+  },
 });
 
 const baseQueryWithRefreshToken = async (args, api, extraOptions) => {
@@ -43,6 +56,10 @@ export const baseApi = createApi({
     "company",
     "workers",
     "eventType",
+    "interest",
+    "privacy",
+    "terms",
+    "legalAbout"
   ],
   baseQuery: baseQueryWithRefreshToken,
   endpoints: () => ({}),

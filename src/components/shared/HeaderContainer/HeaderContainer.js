@@ -9,6 +9,7 @@ import { Layout } from "antd";
 import { AlignJustify } from "lucide-react";
 import { useGetAdminQuery } from "@/redux/api/admin";
 const { Header } = Layout;
+import noUser from "@/assets/images/nouser.png";
 
 export default function HeaderContainer({ collapsed, setCollapsed }) {
   const pathname = usePathname();
@@ -59,7 +60,7 @@ export default function HeaderContainer({ collapsed, setCollapsed }) {
             className="group flex items-center gap-x-2 text-black hover:text-primary-blue"
           >
             <Image
-              src={profileData?.data?.avatar}
+              src={profileData?.data?.avatar || noUser}
               alt="Admin avatar"
               width={52}
               height={52}

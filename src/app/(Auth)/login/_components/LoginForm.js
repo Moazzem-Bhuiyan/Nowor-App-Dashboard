@@ -11,9 +11,12 @@ import logo from "@/assets/logos/Logo.png";
 import Image from "next/image";
 import { useSignInMutation } from "@/redux/api/authApi";
 import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/redux/features/authSlice";
 
 export default function LoginForm() {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [signin, { isLoading }] = useSignInMutation();
   const onLoginSubmit = async (data) => {
     try {
@@ -24,6 +27,12 @@ export default function LoginForm() {
       const res = await signin(payload).unwrap();
       if (res?.success) {
         toast.success(res?.message || "Login successful");
+         dispatch(
+          setUser({
+            token: res?.data?.accessToken,
+            user: res?.data?.user,
+          })
+        )
         router.push("/admin/dashboard");
       }
     } catch (error) {
